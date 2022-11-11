@@ -7,15 +7,31 @@
     <link rel="stylesheet" href="style.css" />
     <title>To-Do App</title>
   </head>
-  <body>
+  <body class="body">
     <header></header>
     <main>
-      <form onsubmit="return false" action="">
-        <input type="text" id="todo-input" />
-        <label for="todo-input">Get sh*t done!</label>
-        <button id="btn-add">Add</button>
-      </form>
-      <ul id="todo-list"></ul>
+      <div class="input-div">
+        <form onsubmit="return false" action="">
+          <input type="text" id="todo-input" />
+          <label for="todo-input" class="input-label">Get sh*t done!</label>
+          <button id="btn-add">Add</button>
+        </form>
+        <ul id="todo-list"></ul>
+      </div>
+      <div id="todos" class="flex-container">
+        <div>
+          <input type="checkbox" id="temp1" />
+          <label for="temp1">Learn HTML</label>
+        </div>
+        <div>
+          <input type="checkbox" id="temp2" />
+          <label for="temp2">Learn CSS</label>
+        </div>
+        <div>
+          <input type="checkbox" id="temp3" />
+          <label for="temp3">Learn JS</label>
+        </div>
+      </div>
     </main>
 
     <script src="script.js"></script>
