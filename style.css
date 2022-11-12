@@ -1,18 +1,23 @@
-* {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
-}
-
-html {
   margin: 0;
   padding: 0;
 }
 
-.input-div {
-  _position: relative;
+:root {
+  --clr-red-01: rgb(239, 72, 111);
+  --clr-yellow-01: rgb(245, 171, 0);
+  --clr-blue-01: rgb(16, 137, 177);
+  --clr-grey-01: rgb(245, 245, 245);
+  --clr-green-01: rgb(5, 214, 158);
+  --clr-white-01: rgb(255, 255, 255);
 }
 
-.input-label {
-  _position: absolute;
+html {
+  font-family: sans-serif;
+  text-align: center;
 }
 
 .todo--status {
@@ -20,15 +25,22 @@ html {
 }
 
 #todo-list {
-  list-style-type: circle;
+  list-style-type: none;
 }
 
 /********************************************************************/
 /* TEMPLATES */
 
-.flex-container {
+.flex-c-c-c {
   display: flex;
   flex-direction: column;
-  _justify-items: center;
-  _align-items: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-r-c-c {
+  display: flex;
+  _flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }

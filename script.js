@@ -1,6 +1,7 @@
 const addBtn = document.querySelector("#btn-add");
+const rmBtn = document.querySelector("#btn-remove");
 const input = document.querySelector("#todo-input");
-const toDoList = document.querySelector("#todos");
+const toDoList = document.querySelector("#todo-list");
 
 const filterOptions = ["all", "done", "open"];
 
@@ -27,23 +28,8 @@ addBtn.addEventListener("click", function () {
 function addTodoItem(event) {
   const newEntry = new toDoItem(input.value, false);
   appState.todos.push(newEntry);
-  //toDos.push();
 
-  let entryDiv = document.createElement("div");
-
-  let todoEntry = document.createElement("input");
-  todoEntry.setAttribute("type", "checkbox");
-  todoEntry.setAttribute("id", generateId());
-
-  console.log(generateId);
-
-  let entryLabel = document.createElement("label");
-  entryLabel.setAttribute("for", todoEntry.id);
-  entryLabel.append(newEntry.description);
-
-  toDoList.appendChild(entryDiv);
-  entryDiv.appendChild(todoEntry);
-  entryDiv.appendChild(entryLabel);
+  createMarkupStructure(newEntry);
 
   //debug
   console.log("Added Entry: " + input.value);
@@ -63,6 +49,24 @@ function filterTodoItems(event) {}
 
 function render() {}
 */
+
+function createMarkupStructure(entry) {
+  let entryDiv = document.createElement("div");
+
+  let todoEntry = document.createElement("input");
+  todoEntry.setAttribute("type", "checkbox");
+  todoEntry.setAttribute("id", generateId());
+
+  //console.log(generateId());
+
+  let entryLabel = document.createElement("label");
+  entryLabel.setAttribute("for", todoEntry.id);
+  entryLabel.append(entry.description);
+
+  entryDiv.appendChild(todoEntry);
+  entryDiv.appendChild(entryLabel);
+  toDoList.appendChild(entryDiv);
+}
 
 /**
  * generate id for specific label and input relation
