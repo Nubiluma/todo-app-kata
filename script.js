@@ -6,7 +6,10 @@ class ToDoItem {
   }
 }
 
+/*****************************************************************************************************/
+
 let idCounter = 0;
+const filterOptions = ["all", "done", "open"];
 
 const addBtn = document.querySelector("#btn-add");
 const rmBtn = document.querySelector("#btn-remove");
@@ -18,14 +21,12 @@ const fstEntry = new ToDoItem("Learn HTML", false, generateId());
 const sndEntry = new ToDoItem("Learn CSS", false, generateId());
 const trdEntry = new ToDoItem("Learn JS", false, generateId());
 
-const filterOptions = ["all", "done", "open"];
+/*****************************************************************************************************/
 
 const appState = {
   filter: "all",
   todos: [fstEntry, sndEntry, trdEntry],
 };
-
-//console.log(appState.todos[0]);
 
 addBtn.addEventListener("click", function () {
   addTodoItem();
@@ -35,13 +36,13 @@ rmBtn.addEventListener("click", function () {
   removeDoneTodos();
 });
 
-//console.dir(toDoList);
+/*****************************************************************************************************/
 
 /**
- * add input value to list
+ * add input value as new ToDoItem
  */
 function addTodoItem() {
-  const newEntry = new ToDoItem(input.value, true, generateId());
+  const newEntry = new ToDoItem(input.value, false, generateId());
   appState.todos.push(newEntry);
 
   createMarkupStructure(newEntry);
@@ -49,36 +50,29 @@ function addTodoItem() {
 
 /**
  * remove ToDoItems with property "isDone === true"
+ * return remaining content of todos array after splicing
  */
 
 function removeDoneTodos() {
   const doneTodos = appState.todos.filter((e) => e.isDone === true);
+  //DEBUG:
+  /* if (doneTodos.length <= 0) {
+    console.log("nothing to remove");
+  }
+  console.log("done:");
+  console.log(doneTodos);
+  console.log("all:");
+  console.log(appState.todos); */
 
-  for (let i = 0; i < appState.todos.length; i++) {
-    if (doneTodos.length > 0) {
-      appState.todos.splice(doneTodos.indexOf(i), 1);
-    }
+  for (let i = 0; i < doneTodos.length; i++) {
+    const index = appState.todos.indexOf(doneTodos[i]);
+    appState.todos.splice(index, 1);
   }
 
   console.log(appState);
 }
 
-function toggleProgress() {
-  const entry = this;
-  const index = appState.todos.findIndex((e) => e.id == entry.id);
-  console.log("index: " + index);
-
-  if (entry.checked) {
-    appState.todos[index].isDone = true;
-    console.log(appState.todos[index]);
-  } else {
-    appState.todos[index].isDone = false;
-    console.log(appState.todos[index]);
-  }
-
-  //entry.classList.toggle("todo--status");
-}
-
+//TODO: tidy code by implementing additional functions
 function createMarkupStructure(entry) {
   const listItem = document.createElement("li");
 
@@ -97,6 +91,28 @@ function createMarkupStructure(entry) {
   toDoList.appendChild(listItem);
 }
 
+/**
+ * set ToDoItem's "isDone"-property to either true or false
+ */
+function toggleProgress() {
+  const entry = this;
+  const index = appState.todos.findIndex((e) => e.id == entry.id);
+  console.log("toggled entry index: " + index);
+
+  if (entry.checked) {
+    appState.todos[index].isDone = true;
+    //console.log(appState.todos[index]);
+  } else {
+    appState.todos[index].isDone = false;
+    //console.log(appState.todos[index]);
+  }
+
+  //entry.classList.toggle("todo--status");
+}
+
+/**
+ * render markup of todo list content
+ */
 function render() {
   for (let i = 0; i < appState.todos.length; i++) {
     createMarkupStructure(appState.todos[i]);
