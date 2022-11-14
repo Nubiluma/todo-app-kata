@@ -45,7 +45,7 @@ function addTodoItem() {
   const newEntry = new ToDoItem(input.value, false, generateId());
   appState.todos.push(newEntry);
 
-  createMarkupStructure(newEntry);
+  render();
 }
 
 /**
@@ -70,6 +70,7 @@ function removeDoneTodos() {
   }
 
   console.log(appState);
+  render();
 }
 
 //TODO: tidy code by implementing additional functions
@@ -114,6 +115,7 @@ function toggleProgress() {
  * render markup of todo list content
  */
 function render() {
+  toDoList.innerHTML = "";
   for (let i = 0; i < appState.todos.length; i++) {
     createMarkupStructure(appState.todos[i]);
   }
