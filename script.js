@@ -1,78 +1,113 @@
-const addBtn = document.querySelector("#btn-add");
-const rmBtn = document.querySelector("#btn-remove");
-const input = document.querySelector("#todo-input");
-const toDoList = document.querySelector("#todo-list");
-
-const filterOptions = ["all", "done", "open"];
-
-const appState = {
-  filter: "all",
-  todos: [],
-};
-
-class toDoItem {
+class ToDoItem {
   constructor(description, isDone) {
     this.description = description;
     this.isDone = isDone;
   }
 }
 
+const addBtn = document.querySelector("#btn-add");
+const rmBtn = document.querySelector("#btn-remove");
+const input = document.querySelector("#todo-input");
+const toDoList = document.querySelector("#todo-list");
+
+//test
+const fstEntry = new ToDoItem("Learn HTML", false);
+const sndEntry = new ToDoItem("Learn CSS", false);
+const trdEntry = new ToDoItem("Learn JS", false);
+
+const filterOptions = ["all", "done", "open"];
+
+const appState = {
+  filter: "all",
+  todos: [fstEntry, sndEntry, trdEntry],
+};
+
+console.log(appState);
+
 addBtn.addEventListener("click", function () {
   addTodoItem();
 });
+
+rmBtn.addEventListener("click", function () {
+  removeDoneTodos();
+});
+
+//console.dir(toDoList);
 
 /**
  * add input value to list
  * @param {*} event
  */
 function addTodoItem(event) {
-  const newEntry = new toDoItem(input.value, false);
+  const newEntry = new ToDoItem(input.value, true);
   appState.todos.push(newEntry);
 
   createMarkupStructure(newEntry);
+}
 
-  //debug
-  console.log("Added Entry: " + input.value);
+/**
+ * remove ToDoItems with property "isDone === true"
+ */
+
+function removeDoneTodos() {
+  const doneTodos = appState.todos.filter((e) => e.isDone === true);
+
+  /* console.log("filter: ");
+  console.log(doneTodos); */
+
+  for (let i = 0; i < appState.todos.length; i++) {
+    if (doneTodos.length > 0) {
+      appState.todos.splice(doneTodos.indexOf(i), 1);
+    }
+  }
+
   console.log(appState);
 }
 
-function removeTodoItem(event) {}
-
+//to do: property isDone -> true/false
 function toggleProgress(event) {
-  let entry = event.target;
-  entry.classList.toggle("todo--status");
+  console.dir(event);
+
+  /* const checkbox = event.children.item(1).checked;
+  console.log(checkbox); */
+
+  //if (entry)
+
+  //entry.classList.toggle("todo--status");
 }
 
-/*
-
-function filterTodoItems(event) {}
-
-function render() {}
-*/
-
 function createMarkupStructure(entry) {
-  let entryDiv = document.createElement("div");
+  const listItem = document.createElement("li");
 
-  let todoEntry = document.createElement("input");
+  const todoEntry = document.createElement("input");
   todoEntry.setAttribute("type", "checkbox");
-  todoEntry.setAttribute("id", generateId());
 
-  //console.log(generateId());
+  if (!todoEntry.hasAttribute("id")) {
+    todoEntry.setAttribute("id", generateId());
+  }
 
   let entryLabel = document.createElement("label");
   entryLabel.setAttribute("for", todoEntry.id);
   entryLabel.append(entry.description);
 
-  entryDiv.appendChild(todoEntry);
-  entryDiv.appendChild(entryLabel);
-  toDoList.appendChild(entryDiv);
+  listItem.appendChild(todoEntry);
+  listItem.appendChild(entryLabel);
+  toDoList.appendChild(listItem);
+}
+
+function render() {
+  for (let i = 0; i < appState.todos.length; i++) {
+    createMarkupStructure(appState.todos[i]);
+  }
 }
 
 /**
- * generate id for specific label and input relation
+ * generate id for label and input relations
  */
 let idCounter = 0;
 function generateId() {
   idCounter++;
   return idCounter.toString();
 }
+
+render();
