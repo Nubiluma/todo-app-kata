@@ -8,18 +8,20 @@ class ToDoItem {
 
 /*****************************************************************************************************/
 
-let idCounter = 0;
-const filterOptions = ["all", "done", "open"];
-
 const addBtn = document.querySelector("#btn-add");
 const rmBtn = document.querySelector("#btn-remove");
 const input = document.querySelector("#todo-input");
+const filterAll = document.querySelector("#all");
+const filterOpen = document.querySelector("#open");
+const filterDone = document.querySelector("#done");
 const toDoList = document.querySelector("#todo-list");
 
+const filterOptions = [filterAll, filterOpen, filterDone];
+
 //test
-const fstEntry = new ToDoItem("Learn HTML", false, generateId());
-const sndEntry = new ToDoItem("Learn CSS", false, generateId());
-const trdEntry = new ToDoItem("Learn JS", false, generateId());
+const fstEntry = new ToDoItem("Learn HTML", false, 1);
+const sndEntry = new ToDoItem("Learn CSS", false, 2);
+const trdEntry = new ToDoItem("Learn JS", false, 3);
 
 /*****************************************************************************************************/
 
@@ -35,6 +37,16 @@ addBtn.addEventListener("click", function () {
 rmBtn.addEventListener("click", function () {
   removeDoneTodos();
 });
+
+for (const el of filterOptions) {
+  el.addEventListener("change", (e) => {
+    appState.filter = e.target.id;
+    //console.log(appState.filter);
+    filterTodos();
+  });
+}
+
+render();
 
 /*****************************************************************************************************/
 
@@ -80,6 +92,7 @@ function createMarkupStructure(entry) {
   const todoEntry = document.createElement("input");
   todoEntry.setAttribute("type", "checkbox");
   todoEntry.setAttribute("id", entry.id);
+  todoEntry.checked = entry.isDone;
 
   todoEntry.addEventListener("change", toggleProgress);
 
@@ -98,17 +111,48 @@ function createMarkupStructure(entry) {
 function toggleProgress() {
   const entry = this;
   const index = appState.todos.findIndex((e) => e.id == entry.id);
-  console.log("toggled entry index: " + index);
+  //console.log("toggled entry index: " + index);
 
   if (entry.checked) {
     appState.todos[index].isDone = true;
-    //console.log(appState.todos[index]);
   } else {
     appState.todos[index].isDone = false;
-    //console.log(appState.todos[index]);
   }
 
-  //entry.classList.toggle("todo--status");
+  render();
+}
+/**
+ * toggle connected label element's text-decoration (line-through)
+ * @param {*} entry targeted li-Element
+ */
+function renderProgress(entry) {
+  const labelElement = document.getElementById(entry.id).nextSibling;
+  /* console.dir(labelElement);
+  console.log(entry.isDone); */
+  if (entry.isDone) {
+    labelElement.classList.add("todo--status");
+  } else {
+    labelElement.classList.remove("todo--status");
+  }
+}
+
+/**
+ * WIP
+ */
+function filterTodos() {
+  if (appState.filter === "open") {
+    filterOpen.checked = true;
+    filterAll.checked = false;
+    filterDone.checked = false;
+  } else if (appState.filter === "done") {
+    filterDone.checked = true;
+    filterOpen.checked = false;
+    filterAll.checked = false;
+  } else {
+    filterAll.checked = true;
+    filterDone.checked = false;
+    filterOpen.checked = false;
+  }
 }
 
 /**
@@ -116,8 +160,12 @@ function toggleProgress() {
  */
 function render() {
   toDoList.innerHTML = "";
+
+  filterTodos();
   for (let i = 0; i < appState.todos.length; i++) {
     createMarkupStructure(appState.todos[i]);
+    renderProgress(appState.todos[i]);
+    //console.log(appState.todos[i]);
   }
 }
 
@@ -126,8 +174,7 @@ function render() {
  */
 
 function generateId() {
-  idCounter++;
-  return "E-" + idCounter.toString();
+  return Date.now();
 }
 
-render();
+//console.log(appState);
