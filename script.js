@@ -42,7 +42,8 @@ for (const el of filterOptions) {
   el.addEventListener("change", (e) => {
     appState.filter = e.target.id;
     //console.log(appState.filter);
-    filterTodos();
+    manageFilterOptions();
+    render();
   });
 }
 
@@ -67,20 +68,14 @@ function addTodoItem() {
 
 function removeDoneTodos() {
   const doneTodos = appState.todos.filter((e) => e.isDone === true);
-  //DEBUG:
-  /* if (doneTodos.length <= 0) {
-    console.log("nothing to remove");
-  }
-  console.log("done:");
-  console.log(doneTodos);
-  console.log("all:");
-  console.log(appState.todos); */
+  //filterTodos("done");
 
   for (let i = 0; i < doneTodos.length; i++) {
     const index = appState.todos.indexOf(doneTodos[i]);
     appState.todos.splice(index, 1);
   }
 
+  console.log("new state:");
   console.log(appState);
   render();
 }
@@ -126,9 +121,9 @@ function toggleProgress() {
  * @param {*} entry targeted li-Element
  */
 function renderProgress(entry) {
-  const labelElement = document.getElementById(entry.id).nextSibling;
-  /* console.dir(labelElement);
-  console.log(entry.isDone); */
+  const labelElement = document.getElementById(entry.id).nextSibling; //BUG (nextSibling) at filter, remove
+  console.dir(labelElement);
+  //console.log(entry.isDone);
   if (entry.isDone) {
     labelElement.classList.add("todo--status");
   } else {
@@ -137,9 +132,23 @@ function renderProgress(entry) {
 }
 
 /**
- * WIP
+ *
+ * @returns either array of all, done or open todos depending on state's filter property
  */
-function filterTodos() {
+function filterTodos(filterProp) {
+  if (filterProp === "open") {
+    return appState.todos.filter((e) => e.isDone === false);
+  } else if (filterProp === "done") {
+    return appState.todos.filter((e) => e.isDone === true);
+  } else {
+    return appState.todos;
+  }
+}
+
+/**
+ *
+ */
+function manageFilterOptions() {
   if (appState.filter === "open") {
     filterOpen.checked = true;
     filterAll.checked = false;
@@ -160,11 +169,15 @@ function filterTodos() {
  */
 function render() {
   toDoList.innerHTML = "";
+  const filteredTodos = filterTodos(appState.filter);
+  console.log(filteredTodos);
 
-  filterTodos();
+  manageFilterOptions();
   for (let i = 0; i < appState.todos.length; i++) {
-    createMarkupStructure(appState.todos[i]);
-    renderProgress(appState.todos[i]);
+    if (filteredTodos.length > 0) {
+      createMarkupStructure(filteredTodos[i]);
+      renderProgress(appState.todos[i]);
+    }
     //console.log(appState.todos[i]);
   }
 }
