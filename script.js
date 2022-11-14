@@ -1,9 +1,12 @@
 class ToDoItem {
-  constructor(description, isDone) {
+  constructor(description, isDone, id) {
     this.description = description;
     this.isDone = isDone;
+    this.id = id;
   }
 }
+
+let idCounter = 0;
 
 const addBtn = document.querySelector("#btn-add");
 const rmBtn = document.querySelector("#btn-remove");
@@ -11,9 +14,9 @@ const input = document.querySelector("#todo-input");
 const toDoList = document.querySelector("#todo-list");
 
 //test
-const fstEntry = new ToDoItem("Learn HTML", false);
-const sndEntry = new ToDoItem("Learn CSS", false);
-const trdEntry = new ToDoItem("Learn JS", false);
+const fstEntry = new ToDoItem("Learn HTML", false, generateId());
+const sndEntry = new ToDoItem("Learn CSS", false, generateId());
+const trdEntry = new ToDoItem("Learn JS", false, generateId());
 
 const filterOptions = ["all", "done", "open"];
 
@@ -22,7 +25,7 @@ const appState = {
   todos: [fstEntry, sndEntry, trdEntry],
 };
 
-console.log(appState);
+//console.log(appState.todos[0]);
 
 addBtn.addEventListener("click", function () {
   addTodoItem();
@@ -36,10 +39,9 @@ rmBtn.addEventListener("click", function () {
 
 /**
  * add input value to list
- * @param {*} event
  */
-function addTodoItem(event) {
-  const newEntry = new ToDoItem(input.value, true);
+function addTodoItem() {
+  const newEntry = new ToDoItem(input.value, true, generateId());
   appState.todos.push(newEntry);
 
   createMarkupStructure(newEntry);
@@ -52,9 +54,6 @@ function addTodoItem(event) {
 function removeDoneTodos() {
   const doneTodos = appState.todos.filter((e) => e.isDone === true);
 
-  /* console.log("filter: ");
-  console.log(doneTodos); */
-
   for (let i = 0; i < appState.todos.length; i++) {
     if (doneTodos.length > 0) {
       appState.todos.splice(doneTodos.indexOf(i), 1);
@@ -64,14 +63,18 @@ function removeDoneTodos() {
   console.log(appState);
 }
 
-//to do: property isDone -> true/false
-function toggleProgress(event) {
-  console.dir(event);
+function toggleProgress() {
+  const entry = this;
+  const index = appState.todos.findIndex((e) => e.id == entry.id);
+  console.log("index: " + index);
 
-  /* const checkbox = event.children.item(1).checked;
-  console.log(checkbox); */
-
-  //if (entry)
+  if (entry.checked) {
+    appState.todos[index].isDone = true;
+    console.log(appState.todos[index]);
+  } else {
+    appState.todos[index].isDone = false;
+    console.log(appState.todos[index]);
+  }
 
   //entry.classList.toggle("todo--status");
 }
@@ -81,10 +84,9 @@ function createMarkupStructure(entry) {
 
   const todoEntry = document.createElement("input");
   todoEntry.setAttribute("type", "checkbox");
+  todoEntry.setAttribute("id", entry.id);
 
-  if (!todoEntry.hasAttribute("id")) {
-    todoEntry.setAttribute("id", generateId());
-  }
+  todoEntry.addEventListener("change", toggleProgress);
 
   let entryLabel = document.createElement("label");
   entryLabel.setAttribute("for", todoEntry.id);
@@ -104,10 +106,10 @@ function render() {
 /**
  * generate id for label and input relations
  */
-let idCounter = 0;
+
 function generateId() {
   idCounter++;
-  return idCounter.toString();
+  return "E-" + idCounter.toString();
 }
 
 render();
