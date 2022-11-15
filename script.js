@@ -18,16 +18,11 @@ const toDoList = document.querySelector("#todo-list");
 
 const filterOptions = [filterAll, filterOpen, filterDone];
 
-//test
-const fstEntry = new ToDoItem("Learn HTML", false, 1);
-const sndEntry = new ToDoItem("Learn CSS", false, 2);
-const trdEntry = new ToDoItem("Learn JS", false, 3);
-
 /*****************************************************************************************************/
 
 const appState = {
   filter: "all",
-  todos: [fstEntry, sndEntry, trdEntry],
+  todos: [],
 };
 
 addBtn.addEventListener("click", function () {
@@ -47,6 +42,7 @@ for (const el of filterOptions) {
   });
 }
 
+getLocalData();
 render();
 
 /*****************************************************************************************************/
@@ -58,7 +54,7 @@ function addTodoItem() {
   if (input.value.length >= 5) {
     const newEntry = new ToDoItem(input.value, false, generateId());
     appState.todos.push(newEntry);
-
+    updateLocalStorage();
     render();
   } else {
     console.log("Description too short");
@@ -71,16 +67,20 @@ function addTodoItem() {
  */
 
 function removeDoneTodos() {
-  const doneTodos = appState.todos.filter((e) => e.isDone === true);
+  //const doneTodos = appState.todos.filter((e) => e.isDone === true);
   //filterTodos("done");
 
-  for (let i = 0; i < doneTodos.length; i++) {
-    const index = appState.todos.indexOf(doneTodos[i]);
-    appState.todos.splice(index, 1);
+  for (let i = 0; i < appState.todos.length; i++) {
+    if (appState.todos[i].isDone) {
+      appState.todos.splice(i, 1);
+    }
+    //const index = appState.todos.indexOf(doneTodos[i]);
   }
 
   console.log("new state:");
   console.log(appState);
+
+  updateLocalStorage();
   render();
 }
 
@@ -117,6 +117,7 @@ function toggleProgress() {
     appState.todos[index].isDone = false;
   }
 
+  updateLocalStorage();
   render();
 }
 /**
@@ -183,6 +184,23 @@ function render() {
     }
     //console.log(appState.todos[i]);
   }
+}
+
+/**
+ * get data from local storage (todo items as array)
+ */
+function getLocalData() {
+  if (localStorage.getItem("todos")) {
+    const todoData = JSON.parse(localStorage.getItem("todos"));
+    appState.todos = todoData;
+  }
+}
+
+/**
+ *
+ */
+function updateLocalStorage() {
+  localStorage.setItem("todos", JSON.stringify(appState.todos));
 }
 
 /**
