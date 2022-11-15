@@ -32,6 +32,7 @@ const appState = {
 
 addBtn.addEventListener("click", function () {
   addTodoItem();
+  input.value = ""; //clear input field
 });
 
 rmBtn.addEventListener("click", function () {
@@ -41,7 +42,6 @@ rmBtn.addEventListener("click", function () {
 for (const el of filterOptions) {
   el.addEventListener("change", (e) => {
     appState.filter = e.target.id;
-    //console.log(appState.filter);
     manageFilterOptions();
     render();
   });
@@ -55,10 +55,14 @@ render();
  * add input value as new ToDoItem
  */
 function addTodoItem() {
-  const newEntry = new ToDoItem(input.value, false, generateId());
-  appState.todos.push(newEntry);
+  if (input.value.length >= 5) {
+    const newEntry = new ToDoItem(input.value, false, generateId());
+    appState.todos.push(newEntry);
 
-  render();
+    render();
+  } else {
+    console.log("Description too short");
+  }
 }
 
 /**
@@ -106,7 +110,6 @@ function createMarkupStructure(entry) {
 function toggleProgress() {
   const entry = this;
   const index = appState.todos.findIndex((e) => e.id == entry.id);
-  //console.log("toggled entry index: " + index);
 
   if (entry.checked) {
     appState.todos[index].isDone = true;
@@ -121,9 +124,9 @@ function toggleProgress() {
  * @param {*} entry targeted li-Element
  */
 function renderProgress(entry) {
-  const labelElement = document.getElementById(entry.id).nextSibling; //BUG (nextSibling) at filter, remove
+  const labelElement = document.getElementById(entry.id).nextSibling; //BUG (nextSibling): Uncaught TypeError
   console.dir(labelElement);
-  //console.log(entry.isDone);
+
   if (entry.isDone) {
     labelElement.classList.add("todo--status");
   } else {
@@ -146,7 +149,7 @@ function filterTodos(filterProp) {
 }
 
 /**
- *
+ * Restrict active checkboxes (filter options) to exactly 1
  */
 function manageFilterOptions() {
   if (appState.filter === "open") {
@@ -170,7 +173,7 @@ function manageFilterOptions() {
 function render() {
   toDoList.innerHTML = "";
   const filteredTodos = filterTodos(appState.filter);
-  console.log(filteredTodos);
+  //console.log(filteredTodos);
 
   manageFilterOptions();
   for (let i = 0; i < appState.todos.length; i++) {
