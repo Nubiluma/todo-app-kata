@@ -25,7 +25,8 @@ const appState = {
   todos: [],
 };
 
-addBtn.addEventListener("click", function () {
+addBtn.addEventListener("click", function (event) {
+  event.preventDefault();
   addTodoItem();
   input.value = ""; //clear input field
 });
@@ -37,7 +38,7 @@ rmBtn.addEventListener("click", function () {
 for (const el of filterOptions) {
   el.addEventListener("change", (e) => {
     appState.filter = e.target.id;
-    manageFilterOptions();
+    //manageFilterOptions();
     render();
   });
 }
@@ -67,15 +68,8 @@ function addTodoItem() {
  */
 
 function removeDoneTodos() {
-  //const doneTodos = appState.todos.filter((e) => e.isDone === true);
+  appState.todos = appState.todos.filter((e) => e.isDone === false);
   //filterTodos("done");
-
-  for (let i = 0; i < appState.todos.length; i++) {
-    if (appState.todos[i].isDone) {
-      appState.todos.splice(i, 1);
-    }
-    //const index = appState.todos.indexOf(doneTodos[i]);
-  }
 
   console.log("new state:");
   console.log(appState);
@@ -86,6 +80,7 @@ function removeDoneTodos() {
 
 //TODO: tidy code by implementing additional functions
 function createMarkupStructure(entry) {
+  console.log(entry);
   const listItem = document.createElement("li");
 
   const todoEntry = document.createElement("input");
@@ -111,28 +106,10 @@ function toggleProgress() {
   const entry = this;
   const index = appState.todos.findIndex((e) => e.id == entry.id);
 
-  if (entry.checked) {
-    appState.todos[index].isDone = true;
-  } else {
-    appState.todos[index].isDone = false;
-  }
+  appState.todos[index].isDone = entry.checked;
 
   updateLocalStorage();
   render();
-}
-/**
- * toggle connected label element's text-decoration (line-through)
- * @param {*} entry targeted li-Element
- */
-function renderProgress(entry) {
-  const labelElement = document.getElementById(entry.id).nextSibling; //BUG (nextSibling): Uncaught TypeError
-  console.dir(labelElement);
-
-  if (entry.isDone) {
-    labelElement.classList.add("todo--status");
-  } else {
-    labelElement.classList.remove("todo--status");
-  }
 }
 
 /**
@@ -150,39 +127,18 @@ function filterTodos(filterProp) {
 }
 
 /**
- * Restrict active checkboxes (filter options) to exactly 1
- */
-function manageFilterOptions() {
-  if (appState.filter === "open") {
-    filterOpen.checked = true;
-    filterAll.checked = false;
-    filterDone.checked = false;
-  } else if (appState.filter === "done") {
-    filterDone.checked = true;
-    filterOpen.checked = false;
-    filterAll.checked = false;
-  } else {
-    filterAll.checked = true;
-    filterDone.checked = false;
-    filterOpen.checked = false;
-  }
-}
-
-/**
  * render markup of todo list content
  */
 function render() {
   toDoList.innerHTML = "";
   const filteredTodos = filterTodos(appState.filter);
-  //console.log(filteredTodos);
+  console.log(filteredTodos);
 
-  manageFilterOptions();
-  for (let i = 0; i < appState.todos.length; i++) {
-    if (filteredTodos.length > 0) {
-      createMarkupStructure(filteredTodos[i]);
-      renderProgress(appState.todos[i]);
-    }
-    //console.log(appState.todos[i]);
+  //manageFilterOptions();
+
+  for (const todo of filteredTodos) {
+    createMarkupStructure(todo);
+    //renderProgress(todo);
   }
 }
 

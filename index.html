@@ -13,30 +13,32 @@
     </header>
     <main>
       <section class="input">
-        <form onsubmit="return false" class="flex-r-c-c">
+        <form class="flex-r-c-c">
           <input type="text" id="todo-input" placeholder="Get sh*t done!" />
           <label for="todo-input"></label>
           <button id="btn-add">Add</button>
         </form>
       </section>
       <section class="filter-options flex-c-c-c">
+        <h2>Filter & Options</h2>
         <ul id="filter">
           <li>
-            <input type="radio" id="all" />
+            <input name="filter" type="radio" id="all" />
             <label for="all">All</label>
           </li>
           <li>
-            <input type="radio" id="open" />
+            <input name="filter" type="radio" id="open" />
             <label for="open">Open</label>
           </li>
           <li>
-            <input type="radio" id="done" />
+            <input name="filter" type="radio" id="done" />
             <label for="done">Done</label>
           </li>
         </ul>
         <button id="btn-remove">Remove Done Todos</button>
       </section>
       <section class="todos">
+        <h2>My Todos</h2>
         <ul id="todo-list" class="flex-c-c-c"></ul>
       </section>
     </main>
