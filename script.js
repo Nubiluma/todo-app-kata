@@ -28,7 +28,6 @@ const appState = {
 addBtn.addEventListener("click", function (event) {
   event.preventDefault();
   addTodoItem();
-  input.value = ""; //clear input field
 });
 
 rmBtn.addEventListener("click", function () {
@@ -52,14 +51,26 @@ render();
  * add input value as new ToDoItem
  */
 function addTodoItem() {
-  if (input.value.length >= 5) {
+  if (isInputValid()) {
     const newEntry = new ToDoItem(input.value, false, generateId());
     appState.todos.push(newEntry);
+
+    //clear input field
+    input.value = "";
     updateLocalStorage();
     render();
-  } else {
-    console.log("Description too short");
   }
+}
+
+function isInputValid() {
+  const inputVal = input.value;
+  const found = appState.todos.find((e) => e.description == inputVal);
+  if (inputVal.length >= 5 && found == null) {
+    return true;
+  }
+
+  console.log("Input invalid");
+  return false;
 }
 
 /**
