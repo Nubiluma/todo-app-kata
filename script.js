@@ -38,7 +38,7 @@ rmBtn.addEventListener("click", function () {
 for (const el of filterOptions) {
   el.addEventListener("change", (e) => {
     appState.filter = e.target.id;
-    //manageFilterOptions();
+    localStorage.setItem("filter", appState.filter);
     render();
   });
 }
@@ -68,11 +68,14 @@ function addTodoItem() {
  */
 
 function removeDoneTodos() {
-  appState.todos = appState.todos.filter((e) => e.isDone === false);
-  //filterTodos("done");
+  if (appState.todos.length <= 0) {
+    console.log("Nothing to delete");
+  }
 
-  console.log("new state:");
-  console.log(appState);
+  appState.todos = appState.todos.filter((e) => e.isDone === false);
+
+  /* console.log("new state:");
+  console.log(appState); */
 
   updateLocalStorage();
   render();
@@ -80,7 +83,7 @@ function removeDoneTodos() {
 
 //TODO: tidy code by implementing additional functions
 function createMarkupStructure(entry) {
-  console.log(entry);
+  //console.log(entry);
   const listItem = document.createElement("li");
 
   const todoEntry = document.createElement("input");
@@ -132,13 +135,30 @@ function filterTodos(filterProp) {
 function render() {
   toDoList.innerHTML = "";
   const filteredTodos = filterTodos(appState.filter);
-  console.log(filteredTodos);
-
-  //manageFilterOptions();
+  //console.log(filteredTodos);
 
   for (const todo of filteredTodos) {
     createMarkupStructure(todo);
-    //renderProgress(todo);
+  }
+
+  renderFilter();
+}
+
+/**
+ * check filter-checkbox of last chosen filter (saved in localStorage)
+ * needed for rendering filter option after site refreshing
+ */
+function renderFilter() {
+  switch (appState.filter) {
+    case "all":
+      filterAll.checked = true;
+      break;
+    case "open":
+      filterOpen.checked = true;
+      break;
+    case "done":
+      filterDone.checked = true;
+      break;
   }
 }
 
@@ -149,6 +169,9 @@ function getLocalData() {
   if (localStorage.getItem("todos")) {
     const todoData = JSON.parse(localStorage.getItem("todos"));
     appState.todos = todoData;
+  }
+  if (localStorage.getItem("filter")) {
+    appState.filter = localStorage.getItem("filter");
   }
 }
 
