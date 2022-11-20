@@ -4,24 +4,42 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
     <title>To-Do App</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/normalize.css@8.0.1/normalize.css"
+    />
   </head>
-  <body class="body">
+  <body class="bg-clr-grey01">
     <header class="">
-      <h1>ToDo-App</h1>
+      <h1
+        class="mar-block-0rem-2rem pad-block-4rem bg-clr-red01 clr-white01 text-shadow-blu-ylw"
+      >
+        Todo-App
+      </h1>
     </header>
-    <main>
-      <section class="input">
-        <form class="flex-r-c-c">
-          <input type="text" id="todo-input" placeholder="Get sh*t done!" />
+    <main class="">
+      <section class="flex-r-c-c mar-block-0rem-2rem">
+        <form class="">
+          <input
+            type="text"
+            id="todo-input"
+            class="border-0 pad-block-p5rem pad-inline-0p25rem flex-grow-1"
+            placeholder="Get sh*t done!"
+          />
           <label for="todo-input"></label>
-          <button id="btn-add">Add</button>
+          <button
+            id="btn-add"
+            class="flex-grow-0 border-0 pad-block-p5rem pad-inline-0p25rem bg-clr-blu01 clr-white01 border-radius-0p25rem box-shadow-red"
+          >
+            Add
+          </button>
         </form>
       </section>
-      <section class="filter-options flex-c-c-c">
-        <h2>Filter & Options</h2>
-        <ul id="filter">
+      <section class="flex-c-c-c mar-block-0rem-2rem">
+        <h2 class="ft-sz-1p5rem mar-block-0rem-1rem">Filter & Options</h2>
+        <ul id="filter" class="list-style-none mar-block-0rem-1rem">
           <li>
             <input name="filter" type="radio" id="all" />
             <label for="all">All</label>
@@ -35,11 +53,16 @@
             <label for="done">Done</label>
           </li>
         </ul>
-        <button id="btn-remove">Remove Done Todos</button>
+        <button
+          id="btn-remove"
+          class="border-0 pad-block-p5rem pad-inline-0p25rem bg-clr-blu01 clr-white01 border-radius-0p25rem box-shadow-red"
+        >
+          Remove Done Todos
+        </button>
       </section>
-      <section class="todos">
-        <h2>My Todos</h2>
-        <ul id="todo-list" class="flex-c-c-c"></ul>
+      <section class="mar-block-0rem-2rem">
+        <h2 class="ft-sz-1p5rem mar-block-0rem-1rem">My Todos</h2>
+        <ul id="todo-list" class="list-style-none flex-c-c-c"></ul>
       </section>
     </main>
 
