@@ -25,17 +25,23 @@
           <input
             type="text"
             id="todo-input"
-            class="border-0 pad-block-p5rem pad-inline-0p25rem flex-grow-1"
+            class="border-0 pad-block-p5rem pad-inline-0p25rem border-radius-0p25rem max-width-16rem flex-align-self-center"
             placeholder="Get sh*t done!"
           />
           <label for="todo-input"></label>
           <button
             id="btn-add"
-            class="flex-grow-0 border-0 pad-block-p5rem pad-inline-0p25rem bg-clr-blu01 clr-white01 border-radius-0p25rem box-shadow-red"
+            class="border-0 pad-block-p5rem pad-inline-0p25rem bg-clr-blu01 clr-white01 border-radius-0p25rem box-shadow-red"
           >
             Add
           </button>
         </form>
+      </section>
+      <section class="flex-r-c-c">
+        <aside
+          id="aside-input-error"
+          class="mar-p5rem bg-clr-white01 border-radius-0p25rem pad-block-p5rem pad-inline-0p25rem border-clr-1px-solid-red max-width-16rem pos-absolute fade-in-text-1s vis-hidden"
+        ></aside>
       </section>
       <section class="flex-c-c-c mar-block-0rem-2rem">
         <h2 class="ft-sz-1p5rem mar-block-0rem-1rem">Filter & Options</h2>

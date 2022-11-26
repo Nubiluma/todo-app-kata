@@ -141,6 +141,10 @@ html {
   background-color: var(--clr-blue-01);
 }
 
+.bg-clr-white01 {
+  background-color: var(--clr-white-01);
+}
+
 .clr-white01 {
   color: var(--clr-white-01);
 }
@@ -148,6 +152,10 @@ html {
 /*****************/
 .border-0 {
   border: none;
+}
+
+.border-clr-1px-solid-red {
+  border: 1px solid var(--clr-red-01);
 }
 
 .border-radius-0p25rem {
@@ -164,6 +172,12 @@ html {
 
 /*****************/
 
+.max-width-16rem {
+  max-width: 16rem;
+}
+
+/*****************/
+
 .flex-c-c-c {
   display: flex;
   flex-direction: column;
@@ -175,7 +189,7 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .flex-grow-0 {
@@ -186,4 +200,20 @@ html {
   flex-grow: 1;
 }
 
+.flex-align-self {
+  align-self: flex-end;
+}
+
+.flex-align-self-center {
+  align-self: center;
+}
+
 /*****************/
+
+.pos-absolute {
+  position: absolute;
+}
+
+.vis-hidden {
+  visibility: hidden;
+}

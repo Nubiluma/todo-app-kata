@@ -15,6 +15,7 @@ const filterAll = document.querySelector("#all");
 const filterOpen = document.querySelector("#open");
 const filterDone = document.querySelector("#done");
 const toDoList = document.querySelector("#todo-list");
+const errorMsg = document.querySelector("#aside-input-error");
 
 const filterOptions = [filterAll, filterOpen, filterDone];
 
@@ -55,11 +56,11 @@ function addTodoItem() {
     const newEntry = new ToDoItem(input.value, false, generateId());
     appState.todos.push(newEntry);
 
-    //clear input field
-    input.value = "";
     updateLocalStorage();
     render();
   }
+  //clear input field
+  input.value = "";
 }
 
 function isInputValid() {
@@ -67,6 +68,12 @@ function isInputValid() {
   const found = appState.todos.find((e) => e.description == inputVal);
   if (inputVal.length >= 5 && found == null) {
     return true;
+  }
+  if (inputVal.length < 5) {
+    renderErrorMsg("Input ivalid! Must consist of 5 characters at least!");
+  }
+  if (found != null) {
+    renderErrorMsg("Input invalid! Todo already exists!");
   }
 
   console.log("Input invalid");
@@ -171,6 +178,15 @@ function renderFilter() {
       filterDone.checked = true;
       break;
   }
+}
+
+function renderErrorMsg(message) {
+  errorMsg.innerText = message;
+  errorMsg.classList.remove("vis-hidden");
+
+  setTimeout(function () {
+    errorMsg.classList.add("vis-hidden");
+  }, 3000);
 }
 
 /**
