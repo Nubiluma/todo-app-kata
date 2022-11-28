@@ -166,6 +166,10 @@ html {
   box-shadow: 0.15rem 0.15rem var(--clr-red-01);
 }
 
+.box-shadow-blurred-grey {
+  box-shadow: 4px 4px 2px rgba(59, 57, 57, 0.584);
+}
+
 .text-shadow-blu-ylw {
   text-shadow: 3px 3px 0 var(--clr-blue-01), 5px 5px 0 var(--clr-yellow-01);
 }

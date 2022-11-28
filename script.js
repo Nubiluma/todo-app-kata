@@ -63,18 +63,27 @@ function addTodoItem() {
   input.value = "";
 }
 
+/**
+ * check if text input is valid
+ * @returns false if input text length is less than 5 chars and if todo item's description is already used
+ */
 function isInputValid() {
   const inputVal = input.value;
-  const found = appState.todos.find((e) => e.description == inputVal);
-  if (inputVal.length >= 5 && found == null) {
+  const found = appState.todos.find((e) => e.description === inputVal);
+
+  if (
+    inputVal.length >= 5 &&
+    found === null &&
+    (found.description.toUpperCase() !== inputVal ||
+      found.description.toLowerCase() !== inputVal)
+  ) {
     return true;
   }
   if (inputVal.length < 5) {
     renderErrorMsg("Input ivalid! Must consist of 5 characters at least!");
   }
-  if (found != null) {
-    renderErrorMsg("Input invalid! Todo already exists!");
-  }
+
+  renderErrorMsg("Input invalid! Todo already exists!");
 
   console.log("Input invalid");
   return false;
