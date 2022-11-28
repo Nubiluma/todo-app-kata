@@ -69,23 +69,29 @@ function addTodoItem() {
  */
 function isInputValid() {
   const inputVal = input.value;
-  const found = appState.todos.find((e) => e.description === inputVal);
-
-  if (
-    inputVal.length >= 5 &&
-    found === null &&
-    (found.description.toUpperCase() !== inputVal ||
-      found.description.toLowerCase() !== inputVal)
-  ) {
-    return true;
+  const found = [];
+  if (appState.todos.length > 0) {
+    found.push(
+      appState.todos.find((e) => e.description.toLowerCase() === inputVal)
+    );
+    found.push(
+      appState.todos.find((e) => e.description.toUpperCase() === inputVal)
+    );
   }
+
   if (inputVal.length < 5) {
     renderErrorMsg("Input ivalid! Must consist of 5 characters at least!");
+    return false;
+  }
+  if (inputVal.length >= 5 && found == null) {
+    return true;
+  } else {
+    renderErrorMsg("Input invalid! Todo already exists!");
   }
 
-  renderErrorMsg("Input invalid! Todo already exists!");
-
-  console.log("Input invalid");
+  /* console.log(found);
+  console.log(inputVal);
+  console.log("Input invalid"); */
   return false;
 }
 
