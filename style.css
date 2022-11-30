@@ -1,6 +1,6 @@
 *,
-*:before,
-*:after {
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -13,6 +13,8 @@
   --clr-grey-01: rgb(245, 245, 245);
   --clr-green-01: rgb(5, 214, 158);
   --clr-white-01: rgb(255, 255, 255);
+  --clr-grey-02: rgb(114, 111, 111);
+  --box-shadow-gradiant-grey: rgba(59, 57, 57, 0.584);
 }
 
 html {
@@ -22,12 +24,56 @@ html {
 }
 
 /********************************************************************/
-/*  */
+/* SPECIFIC STYLING */
+#todo-list li {
+  background-color: var(--clr-white-01);
+  border: 1px solid var(--clr-blue-01);
+  box-shadow: 1px 1px 2px var(--box-shadow-gradiant-grey);
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.25rem;
+  margin-block: 0.1rem;
+  width: 22rem;
+  text-align: start;
+}
 
 #todo-list input[type="checkbox"]:checked + label {
   text-decoration: line-through;
 }
 
+#todo-list label {
+  padding-left: 0.5rem;
+}
+
+#todo-list button {
+  color: var(--clr-red-01);
+  border: 1px solid var(--clr-red-01);
+  border-radius: 0.25rem;
+  padding-inline: 0.25rem;
+  position: absolute;
+  right: 0.5rem;
+}
+
+#todo-list li {
+  position: relative;
+}
+
+#todo-list button:hover {
+  border-width: 2px;
+  font-weight: bold;
+}
+
+/* 
+#todo-list label:hover::after {
+  content: "X";
+  padding-inline: 0.25rem;
+  margin-left: 1rem;
+  font-weight: 100;
+  border: 2px solid var(--clr-grey-02);
+  border-radius: 0.25rem;
+  color: var(--clr-grey-02);
+}
+
+ */
 /********************************************************************/
 /* UTILITIES */
 
@@ -158,6 +204,10 @@ html {
   border: 1px solid var(--clr-red-01);
 }
 
+.border-clr-1px-solid-blue {
+  border: 1px solid var(--clr-blue-01);
+}
+
 .border-radius-0p25rem {
   border-radius: 0.25rem;
 }
@@ -167,7 +217,7 @@ html {
 }
 
 .box-shadow-blurred-grey {
-  box-shadow: 4px 4px 2px rgba(59, 57, 57, 0.584);
+  box-shadow: 4px 4px 2px var(--box-shadow-gradiant-grey);
 }
 
 .text-shadow-blu-ylw {
@@ -180,6 +230,10 @@ html {
   max-width: 16rem;
 }
 
+.max-width-20rem {
+  max-width: 24rem;
+}
+
 /*****************/
 
 .flex-c-c-c {
@@ -187,6 +241,7 @@ html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .flex-r-c-c {
@@ -213,6 +268,10 @@ html {
 }
 
 /*****************/
+
+.text-align-center {
+  text-align: center;
+}
 
 .pos-absolute {
   position: absolute;

@@ -69,30 +69,50 @@ function addTodoItem() {
  */
 function isInputValid() {
   const inputVal = input.value;
-  const found = [];
-  if (appState.todos.length > 0) {
-    found.push(
-      appState.todos.find((e) => e.description.toLowerCase() === inputVal)
-    );
-    found.push(
-      appState.todos.find((e) => e.description.toUpperCase() === inputVal)
-    );
-  }
+  const foundExistingEntry = findEntry();
 
   if (inputVal.length < 5) {
     renderErrorMsg("Input ivalid! Must consist of 5 characters at least!");
     return false;
   }
-  if (inputVal.length >= 5 && found == null) {
+
+  console.log(foundExistingEntry);
+
+  if (inputVal.length >= 5 && foundExistingEntry == null) {
     return true;
   } else {
     renderErrorMsg("Input invalid! Todo already exists!");
   }
 
-  /* console.log(found);
+  /* 
   console.log(inputVal);
   console.log("Input invalid"); */
   return false;
+}
+
+/**
+ * find already existing todo-item if present (case sensitive)
+ * @returns todo-item id
+ */
+function findEntry() {
+  const inputVal = input.value;
+
+  const inputLowerCase = appState.todos.find(
+    (e) => e.description.toLowerCase() === inputVal
+  );
+  const inputUpperCase = appState.todos.find(
+    (e) => e.description.toUpperCase() === inputVal
+  );
+
+  if (inputLowerCase != null) {
+    console.log(inputLowerCase.id);
+    return inputLowerCase.id;
+  }
+
+  if (inputUpperCase != null) {
+    console.log(inputUpperCase.id);
+    return inputUpperCase.id;
+  }
 }
 
 /**
@@ -114,6 +134,18 @@ function removeDoneTodos() {
   render();
 }
 
+/**
+ * delete todo-item matching clicked button (compares todo-item id with button name)
+ */
+function deleteSingleEntry() {
+  //console.log(this);
+  const index = appState.todos.findIndex((e) => e.id == this.name);
+  appState.todos.splice(index, 1);
+
+  updateLocalStorage();
+  render();
+}
+
 //TODO: tidy code by implementing additional functions
 function createMarkupStructure(entry) {
   //console.log(entry);
@@ -130,10 +162,25 @@ function createMarkupStructure(entry) {
   entryLabel.setAttribute("for", todoEntry.id);
   entryLabel.append(entry.description);
 
+  const deleteBtn = document.createElement("button");
+  deleteBtn.setAttribute("name", todoEntry.id);
+  deleteBtn.innerText = "X";
+  deleteBtn.addEventListener("click", deleteSingleEntry);
+
   listItem.appendChild(todoEntry);
   listItem.appendChild(entryLabel);
   toDoList.appendChild(listItem);
+  listItem.appendChild(deleteBtn);
 }
+
+//WIP
+/* function createMarkupListButtons(listElement) {
+  const deleteBtn = document.createElement("button");
+  //TODO: Move Buttons
+
+  deleteBtn.addEventListener("click", deleteSingleEntry);
+  listElement.appendChild(deleteBtn);
+} */
 
 /**
  * set ToDoItem's "isDone"-property to either true or false
