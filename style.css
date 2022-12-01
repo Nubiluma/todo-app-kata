@@ -32,8 +32,10 @@ html {
   border-radius: 0.25rem;
   padding: 0.5rem 0.25rem;
   margin-block: 0.1rem;
-  width: 22rem;
-  text-align: start;
+  width: 24rem;
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 #todo-list input[type="checkbox"]:checked + label {
@@ -41,20 +43,21 @@ html {
 }
 
 #todo-list label {
-  padding-left: 0.5rem;
+  flex-grow: 1;
+  text-align: start;
+  padding-inline: 0.5rem 0.25rem;
 }
 
 #todo-list button {
   color: var(--clr-red-01);
-  border: 1px solid var(--clr-red-01);
+  border: 2px solid var(--clr-red-01);
   border-radius: 0.25rem;
-  padding-inline: 0.25rem;
-  position: absolute;
-  right: 0.5rem;
+  padding-block: 0.1rem;
+  font-weight: bold;
 }
 
 #todo-list li {
-  position: relative;
+  _position: relative;
 }
 
 #todo-list button:hover {

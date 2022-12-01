@@ -146,6 +146,18 @@ function deleteSingleEntry() {
   render();
 }
 
+function editEntry() {}
+
+//WIP
+function moveEntry(direction) {
+  /* switch (direction) {
+    case "up":
+      break;
+    case "down":
+      break;
+  } */
+}
+
 //TODO: tidy code by implementing additional functions
 function createMarkupStructure(entry) {
   //console.log(entry);
@@ -162,25 +174,47 @@ function createMarkupStructure(entry) {
   entryLabel.setAttribute("for", todoEntry.id);
   entryLabel.append(entry.description);
 
-  const deleteBtn = document.createElement("button");
-  deleteBtn.setAttribute("name", todoEntry.id);
-  deleteBtn.innerText = "X";
-  deleteBtn.addEventListener("click", deleteSingleEntry);
-
   listItem.appendChild(todoEntry);
   listItem.appendChild(entryLabel);
   toDoList.appendChild(listItem);
-  listItem.appendChild(deleteBtn);
+
+  createUtilityButtons(listItem, todoEntry.id);
 }
 
-//WIP
-/* function createMarkupListButtons(listElement) {
-  const deleteBtn = document.createElement("button");
-  //TODO: Move Buttons
+function createUtilityButtons(listItem, id) {
+  const btnContainer = document.createElement("div");
+  //edit
+  const editBtn = document.createElement("button");
+  editBtn.setAttribute("name", id);
+  editBtn.innerText = "✏️";
+  editBtn.addEventListener("click", editEntry);
+  btnContainer.appendChild(editBtn);
 
+  //move up or down
+  const moveUpBtn = document.createElement("button");
+  moveUpBtn.setAttribute("name", id);
+  moveUpBtn.innerText = "⬆";
+  const directionUp = "up";
+  moveUpBtn.addEventListener("click", moveEntry(directionUp));
+  btnContainer.appendChild(moveUpBtn);
+
+  const moveDownBtn = document.createElement("button");
+  moveDownBtn.setAttribute("name", id);
+  moveDownBtn.innerText = "⬇";
+  const directionDown = "down";
+  moveDownBtn.addEventListener("click", moveEntry(directionDown));
+  btnContainer.appendChild(moveDownBtn);
+
+  //delete
+  const deleteBtn = document.createElement("button");
+  deleteBtn.setAttribute("name", id);
+  deleteBtn.innerText = "❌";
   deleteBtn.addEventListener("click", deleteSingleEntry);
-  listElement.appendChild(deleteBtn);
-} */
+  btnContainer.appendChild(deleteBtn);
+
+  listItem.appendChild(btnContainer);
+  //listItem.parentNode.insertBefore(deleteBtn, listItem.nextSibling);
+}
 
 /**
  * set ToDoItem's "isDone"-property to either true or false
