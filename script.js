@@ -52,7 +52,7 @@ render();
  * add input value as new ToDoItem
  */
 function addTodoItem() {
-  if (isInputValid()) {
+  if (isInputValid(input.value)) {
     const newEntry = new ToDoItem(input.value, false, generateId());
     appState.todos.push(newEntry);
 
@@ -67,8 +67,7 @@ function addTodoItem() {
  * check if text input is valid
  * @returns false if input text length is less than 5 chars and if todo item's description is already used
  */
-function isInputValid() {
-  const inputVal = input.value;
+function isInputValid(inputVal) {
   const foundExistingEntry = findEntry();
 
   if (inputVal.length < 5) {
@@ -138,15 +137,67 @@ function removeDoneTodos() {
  * delete todo-item matching clicked button (compares todo-item id with button name)
  */
 function deleteSingleEntry() {
-  //console.log(this);
-  const index = appState.todos.findIndex((e) => e.id == this.name);
+  const index = appState.todos.findIndex((e) => e.id === parseInt(this.name));
   appState.todos.splice(index, 1);
 
   updateLocalStorage();
   render();
 }
 
-function editEntry() {}
+//TODO: tidy code by implementing additional functions
+function editEntry() {
+  //logic
+  const index = appState.todos.findIndex((e) => e.id === parseInt(this.name)); //this: editBtn
+  const listItemInput = document.getElementById(parseInt(this.name)); //sibling input checkbox element
+  const listElement = listItemInput.parentElement; //parent li element
+  console.dir(listElement);
+
+  //check for already existing editing element (here: div)
+  if (listElement.nextSibling.nodeName != "DIV") {
+    //editBtn extra styling
+    this.classList.add("bg-clr-red02");
+
+    //structure
+    const container = document.createElement("div");
+    container.classList.add("editTextInput");
+
+    const arrowSymbol = document.createElement("p");
+    arrowSymbol.innerText = "↪";
+    arrowSymbol.classList.add("arrowSymbol");
+
+    const inputText = document.createElement("input");
+    inputText.setAttribute("type", "text");
+    inputText.setAttribute("placeholder", "Edit Todo Title here...");
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.innerText = "✓";
+    confirmBtn.classList.add("confirmBtn");
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.innerText = "✕";
+
+    container.appendChild(arrowSymbol);
+    container.appendChild(inputText);
+    container.appendChild(confirmBtn);
+    container.appendChild(cancelBtn);
+
+    listElement.parentNode.insertBefore(container, listElement.nextSibling);
+
+    confirmBtn.addEventListener("click", function () {
+      if (isInputValid(inputText.value)) {
+        appState.todos[index].description = inputText.value;
+
+        updateLocalStorage();
+        render();
+      }
+    });
+
+    //render to hide editing element
+    cancelBtn.addEventListener("click", function () {
+      render();
+    });
+  }
+}
 
 //WIP
 function moveEntry(direction) {
@@ -160,7 +211,6 @@ function moveEntry(direction) {
 
 //TODO: tidy code by implementing additional functions
 function createMarkupStructure(entry) {
-  //console.log(entry);
   const listItem = document.createElement("li");
 
   const todoEntry = document.createElement("input");
@@ -170,10 +220,16 @@ function createMarkupStructure(entry) {
 
   todoEntry.addEventListener("change", toggleProgress);
 
-  let entryLabel = document.createElement("label");
+  const entryLabel = document.createElement("label");
   entryLabel.setAttribute("for", todoEntry.id);
-  entryLabel.append(entry.description);
+  entryLabel.innerText = entry.description;
 
+  //make label text editable
+  /* entryLabel.setAttribute("contentEditable", "true");
+  entryLabel.addEventListener("click", function (e) {
+    e.preventDefault();
+  });
+ */
   listItem.appendChild(todoEntry);
   listItem.appendChild(entryLabel);
   toDoList.appendChild(listItem);
@@ -195,14 +251,14 @@ function createUtilityButtons(listItem, id) {
   moveUpBtn.setAttribute("name", id);
   moveUpBtn.innerText = "⬆";
   const directionUp = "up";
-  moveUpBtn.addEventListener("click", moveEntry(directionUp));
+  moveUpBtn.addEventListener("click", moveEntry(directionUp)); //NYI
   btnContainer.appendChild(moveUpBtn);
 
   const moveDownBtn = document.createElement("button");
   moveDownBtn.setAttribute("name", id);
   moveDownBtn.innerText = "⬇";
   const directionDown = "down";
-  moveDownBtn.addEventListener("click", moveEntry(directionDown));
+  moveDownBtn.addEventListener("click", moveEntry(directionDown)); //NYI
   btnContainer.appendChild(moveDownBtn);
 
   //delete
@@ -213,7 +269,6 @@ function createUtilityButtons(listItem, id) {
   btnContainer.appendChild(deleteBtn);
 
   listItem.appendChild(btnContainer);
-  //listItem.parentNode.insertBefore(deleteBtn, listItem.nextSibling);
 }
 
 /**
@@ -221,7 +276,8 @@ function createUtilityButtons(listItem, id) {
  */
 function toggleProgress() {
   const entry = this;
-  const index = appState.todos.findIndex((e) => e.id == entry.id);
+  console.dir(this);
+  const index = appState.todos.findIndex((e) => e.id === parseInt(entry.id));
 
   appState.todos[index].isDone = entry.checked;
 
