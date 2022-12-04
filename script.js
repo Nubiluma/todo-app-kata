@@ -115,7 +115,7 @@ function editEntry() {
       ).parentElement.nextSibling;
       console.dir(toRemove);
       activeEditingElementBtn.classList.remove("bg-clr-red02");
-      if (toRemove != null) {
+      if (toRemove != null && toRemove.nodeName === "DIV") {
         toRemove.remove();
       }
     }
@@ -169,14 +169,46 @@ function editEntry() {
   }
 }
 
-//WIP
-function moveEntry(direction) {
-  /* switch (direction) {
-     case "up":
-       break;
-     case "down":
-       break;
-   } */
+/**
+ * move todo-item either up or down in list
+ */
+function moveEntry() {
+  const index = appState.todos.findIndex((e) => e.id === parseInt(this.name));
+  let direction;
+
+  if (this.innerText === "⬆") {
+    direction = "up";
+  } else {
+    direction = "down";
+  }
+
+  //temporary
+  if (appState.filter === "all") {
+    switch (direction) {
+      case "up":
+        if (index > 0) {
+          const tempStore = appState.todos[index - 1];
+          appState.todos[index - 1] = appState.todos[index];
+          appState.todos[index] = tempStore;
+
+          updateLocalStorage();
+          render();
+        }
+
+        break;
+      case "down":
+        if (index + 1 < appState.todos.length) {
+          const tempStore = appState.todos[index + 1];
+          appState.todos[index + 1] = appState.todos[index];
+          appState.todos[index] = tempStore;
+
+          updateLocalStorage();
+          render();
+        }
+
+        break;
+    }
+  }
 }
 
 /**
@@ -324,15 +356,13 @@ function createUtilityButtons(listItem, id) {
   const moveUpBtn = document.createElement("button");
   moveUpBtn.setAttribute("name", id);
   moveUpBtn.innerText = "⬆";
-  const directionUp = "up";
-  moveUpBtn.addEventListener("click", moveEntry(directionUp)); //NYI
+  moveUpBtn.addEventListener("click", moveEntry); //NYI
   btnContainer.appendChild(moveUpBtn);
 
   const moveDownBtn = document.createElement("button");
   moveDownBtn.setAttribute("name", id);
   moveDownBtn.innerText = "⬇";
-  const directionDown = "down";
-  moveDownBtn.addEventListener("click", moveEntry(directionDown)); //NYI
+  moveDownBtn.addEventListener("click", moveEntry); //NYI
   btnContainer.appendChild(moveDownBtn);
 
   //delete
