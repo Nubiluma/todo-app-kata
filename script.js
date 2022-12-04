@@ -144,20 +144,44 @@ function deleteSingleEntry() {
   render();
 }
 
-//TODO: tidy code by implementing additional functions
+/**
+ * let user edit todo-item's description
+ * prevent more than 1 editing element (div, input, buttons) to be visible
+ * check if there is already an editing element existing in todo-list ul element
+ * activeEditingElementBtn variable saves current active editBtn button element
+ */
+let activeEditingElementBtn = null;
 function editEntry() {
   //logic
   const index = appState.todos.findIndex((e) => e.id === parseInt(this.name)); //this: editBtn
   const listItemInput = document.getElementById(parseInt(this.name)); //sibling input checkbox element
   const listElement = listItemInput.parentElement; //parent li element
-  console.dir(listElement);
 
-  //check for already existing editing element (here: div)
-  if (listElement.nextSibling.nodeName != "DIV") {
-    //editBtn extra styling
-    this.classList.add("bg-clr-red02");
+  //console.log("this.name: ", this.name);
+
+  /**
+   * check if activeEditingElementBtn matches currently clicked editBtn button element
+   */
+  if (activeEditingElementBtn != this) {
+    /* remove existing editing element (the one which was opened before and is still visible) */
+    if (activeEditingElementBtn != null) {
+      //console.log("active: ", activeEditingElementBtn.name);
+      const toRemove = document.getElementById(
+        parseInt(activeEditingElementBtn.name)
+      ).parentElement.nextSibling;
+      console.dir(toRemove);
+      activeEditingElementBtn.classList.remove("bg-clr-red02");
+      toRemove.remove();
+    }
+    /* overwrite activeEditingElementBtn to this as the current active/open/visible editing element */
+    activeEditingElementBtn = this;
+
+    //console.dir(this.name);
+
+    this.classList.add("bg-clr-red02"); //editBtn extra styling
 
     //structure
+    //TODO: tidy code by implementing additional functions
     const container = document.createElement("div");
     container.classList.add("editTextInput");
 
@@ -183,6 +207,7 @@ function editEntry() {
 
     listElement.parentNode.insertBefore(container, listElement.nextSibling);
 
+    //event listeners for confirm and cancel buttons
     confirmBtn.addEventListener("click", function () {
       if (isInputValid(inputText.value)) {
         appState.todos[index].description = inputText.value;
