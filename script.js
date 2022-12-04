@@ -32,7 +32,7 @@ addBtn.addEventListener("click", function (event) {
 });
 
 rmBtn.addEventListener("click", function () {
-  removeDoneTodos();
+  removeAllDoneTodos();
 });
 
 for (const el of filterOptions) {
@@ -64,51 +64,14 @@ function addTodoItem() {
 }
 
 /**
- * check if text input is valid
- * @returns false if input text length is less than 5 chars and if todo item's description is already used
+ * delete todo-item matching clicked button (compares todo-item id with button name)
  */
-function isInputValid(inputVal) {
-  const foundExistingEntry = findExistingEntry();
+function deleteSingleEntry() {
+  const index = appState.todos.findIndex((e) => e.id === parseInt(this.name));
+  appState.todos.splice(index, 1);
 
-  if (inputVal.length < 5) {
-    renderErrorMsg("Input ivalid! Must consist of 5 characters at least!");
-    return false;
-  }
-
-  //console.log(foundExistingEntry);
-
-  if (inputVal.length >= 5 && foundExistingEntry == null) {
-    return true;
-  } else {
-    renderErrorMsg("Input invalid! Todo already exists!");
-  }
-
-  return false;
-}
-
-/**
- * find already existing todo-item if present (case sensitive)
- * @returns todo-item id
- */
-function findExistingEntry() {
-  const inputVal = input.value;
-
-  const inputLowerCase = appState.todos.find(
-    (e) => e.description.toLowerCase() === inputVal
-  );
-  const inputUpperCase = appState.todos.find(
-    (e) => e.description.toUpperCase() === inputVal
-  );
-
-  if (inputLowerCase != null) {
-    console.log(inputLowerCase.id);
-    return inputLowerCase.id;
-  }
-
-  if (inputUpperCase != null) {
-    console.log(inputUpperCase.id);
-    return inputUpperCase.id;
-  }
+  updateLocalStorage();
+  render();
 }
 
 /**
@@ -116,26 +79,12 @@ function findExistingEntry() {
  * return remaining content of todos array after splicing
  */
 
-function removeDoneTodos() {
+function removeAllDoneTodos() {
   if (appState.todos.length <= 0) {
     console.log("Nothing to delete");
   }
 
   appState.todos = appState.todos.filter((e) => e.isDone === false);
-
-  /* console.log("new state:");
-  console.log(appState); */
-
-  updateLocalStorage();
-  render();
-}
-
-/**
- * delete todo-item matching clicked button (compares todo-item id with button name)
- */
-function deleteSingleEntry() {
-  const index = appState.todos.findIndex((e) => e.id === parseInt(this.name));
-  appState.todos.splice(index, 1);
 
   updateLocalStorage();
   render();
@@ -223,11 +172,121 @@ function editEntry() {
 //WIP
 function moveEntry(direction) {
   /* switch (direction) {
-    case "up":
+     case "up":
+       break;
+     case "down":
+       break;
+   } */
+}
+
+/**
+ * set ToDoItem's "isDone"-property to either true or false
+ */
+function toggleProgress() {
+  const entry = this;
+  //console.dir(this);
+  const index = appState.todos.findIndex((e) => e.id === parseInt(entry.id));
+
+  appState.todos[index].isDone = entry.checked;
+
+  updateLocalStorage();
+  render();
+}
+
+/**
+ * check if text input is valid
+ * @param {*} inputVal input element value from user input
+ * @returns false if input text length is less than 5 chars and if todo item's description is already used
+ */
+function isInputValid(inputVal) {
+  const foundExistingEntry = findExistingEntry();
+
+  if (inputVal.length < 5) {
+    renderErrorMsg("Input ivalid! Must consist of 5 characters at least!");
+    return false;
+  }
+
+  if (inputVal.length >= 5 && foundExistingEntry == null) {
+    return true;
+  } else {
+    renderErrorMsg("Input invalid! Todo already exists!");
+  }
+
+  return false;
+}
+
+/**
+ * find already existing todo-item if present (case sensitive)
+ * @returns todo-item id
+ */
+function findExistingEntry() {
+  const inputVal = input.value;
+
+  const inputLowerCase = appState.todos.find(
+    (e) => e.description.toLowerCase() === inputVal
+  );
+  const inputUpperCase = appState.todos.find(
+    (e) => e.description.toUpperCase() === inputVal
+  );
+
+  if (inputLowerCase != null) {
+    console.log(inputLowerCase.id);
+    return inputLowerCase.id;
+  }
+
+  if (inputUpperCase != null) {
+    console.log(inputUpperCase.id);
+    return inputUpperCase.id;
+  }
+}
+
+/*****************************************************************************************************/
+
+/**
+ * render markup of todo list content
+ */
+function render() {
+  toDoList.innerHTML = "";
+  const filteredTodos = filterTodos(appState.filter);
+  //console.log(filteredTodos);
+
+  for (const todo of filteredTodos) {
+    createMarkupStructure(todo);
+  }
+
+  renderFilter();
+}
+
+/**
+ * @param {*} filterProp state's filter property
+ * @returns either array of all, done or open todos depending on state's filter property
+ */
+function filterTodos(filterProp) {
+  if (filterProp === "open") {
+    return appState.todos.filter((e) => e.isDone === false);
+  } else if (filterProp === "done") {
+    return appState.todos.filter((e) => e.isDone === true);
+  } else {
+    return appState.todos;
+  }
+}
+
+/**
+ * check filter-checkbox of last chosen filter (saved in localStorage)
+ * needed for rendering filter option after site refreshing
+ */
+function renderFilter() {
+  switch (appState.filter) {
+    case "all":
+      filterAll.checked = true;
       break;
-    case "down":
+    case "open":
+      filterOpen.checked = true;
       break;
-  } */
+    case "done":
+      filterDone.checked = true;
+      break;
+  }
 }
 
 //TODO: tidy code by implementing additional functions
@@ -285,68 +344,10 @@ function createUtilityButtons(listItem, id) {
 
   listItem.appendChild(btnContainer);
 }
-
 /**
- * set ToDoItem's "isDone"-property to either true or false
+ * tell user why their input is invalid by briefly rendering element with corresponding text
+ * @param {*} message corresponding text: either not enough characters or duplicate input
  */
-function toggleProgress() {
-  const entry = this;
-  console.dir(this);
-  const index = appState.todos.findIndex((e) => e.id === parseInt(entry.id));
-
-  appState.todos[index].isDone = entry.checked;
-
-  updateLocalStorage();
-  render();
-}
-
-/**
- *
- * @returns either array of all, done or open todos depending on state's filter property
- */
-function filterTodos(filterProp) {
-  if (filterProp === "open") {
-    return appState.todos.filter((e) => e.isDone === false);
-  } else if (filterProp === "done") {
-    return appState.todos.filter((e) => e.isDone === true);
-  } else {
-    return appState.todos;
-  }
-}
-
-/**
- * render markup of todo list content
- */
-function render() {
-  toDoList.innerHTML = "";
-  const filteredTodos = filterTodos(appState.filter);
-  //console.log(filteredTodos);
-
-  for (const todo of filteredTodos) {
-    createMarkupStructure(todo);
-  }
-
-  renderFilter();
-}
-
-/**
- * check filter-checkbox of last chosen filter (saved in localStorage)
- * needed for rendering filter option after site refreshing
- */
-function renderFilter() {
-  switch (appState.filter) {
-    case "all":
-      filterAll.checked = true;
-      break;
-    case "open":
-      filterOpen.checked = true;
-      break;
-    case "done":
-      filterDone.checked = true;
-      break;
-  }
-}
-
 function renderErrorMsg(message) {
   errorMsg.innerText = message;
   errorMsg.classList.remove("vis-hidden");
@@ -356,8 +357,10 @@ function renderErrorMsg(message) {
   }, 3000);
 }
 
+/*****************************************************************************************************/
+
 /**
- * get data from local storage (todo items as array)
+ * get data from local storage (todo-items as array)
  */
 function getLocalData() {
   if (localStorage.getItem("todos")) {
@@ -370,7 +373,7 @@ function getLocalData() {
 }
 
 /**
- *
+ * load todo-items to local storage
  */
 function updateLocalStorage() {
   localStorage.setItem("todos", JSON.stringify(appState.todos));
@@ -379,9 +382,6 @@ function updateLocalStorage() {
 /**
  * generate id for label and input relations
  */
-
 function generateId() {
   return Date.now();
 }
-
-//console.log(appState);
