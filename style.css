@@ -77,9 +77,14 @@ html {
 }
 
 #todo-list input[type="text"] {
+  color: var(--clr-grey-02);
   width: 16rem;
   padding-block: 0.25rem;
   flex-grow: 1;
+}
+
+#todo-list input[type="text"]:focus {
+  color: black;
 }
 
 .confirmBtn {

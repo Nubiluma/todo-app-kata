@@ -59,8 +59,8 @@ function addTodoItem() {
     updateLocalStorage();
     render();
   }
-  //clear input field
-  input.value = "";
+
+  input.value = ""; //clear input field
 }
 
 /**
@@ -68,14 +68,14 @@ function addTodoItem() {
  * @returns false if input text length is less than 5 chars and if todo item's description is already used
  */
 function isInputValid(inputVal) {
-  const foundExistingEntry = findEntry();
+  const foundExistingEntry = findExistingEntry();
 
   if (inputVal.length < 5) {
     renderErrorMsg("Input ivalid! Must consist of 5 characters at least!");
     return false;
   }
 
-  console.log(foundExistingEntry);
+  //console.log(foundExistingEntry);
 
   if (inputVal.length >= 5 && foundExistingEntry == null) {
     return true;
@@ -83,9 +83,6 @@ function isInputValid(inputVal) {
     renderErrorMsg("Input invalid! Todo already exists!");
   }
 
-  /* 
-  console.log(inputVal);
-  console.log("Input invalid"); */
   return false;
 }
 
@@ -93,7 +90,7 @@ function isInputValid(inputVal) {
  * find already existing todo-item if present (case sensitive)
  * @returns todo-item id
  */
-function findEntry() {
+function findExistingEntry() {
   const inputVal = input.value;
 
   const inputLowerCase = appState.todos.find(
@@ -154,10 +151,8 @@ let activeEditingElementBtn = null;
 function editEntry() {
   //logic
   const index = appState.todos.findIndex((e) => e.id === parseInt(this.name)); //this: editBtn
-  const listItemInput = document.getElementById(parseInt(this.name)); //sibling input checkbox element
-  const listElement = listItemInput.parentElement; //parent li element
-
-  //console.log("this.name: ", this.name);
+  const listItemInput = document.getElementById(parseInt(this.name)); //input checkbox element (sibling)
+  const listElement = listItemInput.parentElement; //li element (parent)
 
   /**
    * check if activeEditingElementBtn matches currently clicked editBtn button element
@@ -171,12 +166,12 @@ function editEntry() {
       ).parentElement.nextSibling;
       console.dir(toRemove);
       activeEditingElementBtn.classList.remove("bg-clr-red02");
-      toRemove.remove();
+      if (toRemove != null) {
+        toRemove.remove();
+      }
     }
     /* overwrite activeEditingElementBtn to this as the current active/open/visible editing element */
     activeEditingElementBtn = this;
-
-    //console.dir(this.name);
 
     this.classList.add("bg-clr-red02"); //editBtn extra styling
 
@@ -192,6 +187,7 @@ function editEntry() {
     const inputText = document.createElement("input");
     inputText.setAttribute("type", "text");
     inputText.setAttribute("placeholder", "Edit Todo Title here...");
+    inputText.value = appState.todos[index].description;
 
     const confirmBtn = document.createElement("button");
     confirmBtn.innerText = "✓";
@@ -249,12 +245,6 @@ function createMarkupStructure(entry) {
   entryLabel.setAttribute("for", todoEntry.id);
   entryLabel.innerText = entry.description;
 
-  //make label text editable
-  /* entryLabel.setAttribute("contentEditable", "true");
-  entryLabel.addEventListener("click", function (e) {
-    e.preventDefault();
-  });
- */
   listItem.appendChild(todoEntry);
   listItem.appendChild(entryLabel);
   toDoList.appendChild(listItem);
