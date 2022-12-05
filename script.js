@@ -11,18 +11,21 @@ class ToDoItem {
 const addBtn = document.querySelector("#btn-add");
 const rmBtn = document.querySelector("#btn-remove");
 const input = document.querySelector("#todo-input");
-const filterAll = document.querySelector("#all");
-const filterOpen = document.querySelector("#open");
-const filterDone = document.querySelector("#done");
+const domFilterAll = document.querySelector("#all");
+const domFilterOpen = document.querySelector("#open");
+const domFilterDone = document.querySelector("#done");
 const toDoList = document.querySelector("#todo-list");
 const errorMsg = document.querySelector("#aside-input-error");
+const filterAll = "all";
+const filterOpen = "open";
+const filterDone = "done";
 
-const filterOptions = [filterAll, filterOpen, filterDone];
+const filterOptions = [domFilterAll, domFilterOpen, domFilterDone];
 
 /*****************************************************************************************************/
 
 const appState = {
-  filter: "all",
+  filter: filterAll,
   todos: [],
 };
 
@@ -43,7 +46,7 @@ for (const el of filterOptions) {
   });
 }
 
-getLocalData();
+getDataFromLocalStorage();
 render();
 
 /*****************************************************************************************************/
@@ -183,7 +186,7 @@ function moveEntry() {
   }
 
   //temporary
-  if (appState.filter === "all") {
+  if (appState.filter === filterAll) {
     switch (direction) {
       case "up":
         if (index > 0) {
@@ -216,7 +219,7 @@ function moveEntry() {
  */
 function toggleProgress() {
   const entry = this;
-  //console.dir(this);
+
   const index = appState.todos.findIndex((e) => e.id === parseInt(entry.id));
 
   appState.todos[index].isDone = entry.checked;
@@ -231,20 +234,18 @@ function toggleProgress() {
  * @returns false if input text length is less than 5 chars and if todo item's description is already used
  */
 function isInputValid(inputVal) {
-  const foundExistingEntry = findExistingEntry();
-
   if (inputVal.length < 5) {
     renderErrorMsg("Input ivalid! Must consist of 5 characters at least!");
     return false;
   }
 
-  if (inputVal.length >= 5 && foundExistingEntry == null) {
-    return true;
-  } else {
+  const foundExistingEntry = findExistingEntry();
+  if (foundExistingEntry) {
     renderErrorMsg("Input invalid! Todo already exists!");
+    return false;
   }
 
-  return false;
+  return true;
 }
 
 /**
@@ -254,21 +255,12 @@ function isInputValid(inputVal) {
 function findExistingEntry() {
   const inputVal = input.value;
 
-  const inputLowerCase = appState.todos.find(
-    (e) => e.description.toLowerCase() === inputVal
-  );
-  const inputUpperCase = appState.todos.find(
-    (e) => e.description.toUpperCase() === inputVal
+  const inputBothCases = appState.todos.find(
+    (e) => e.description.toLowerCase() === inputVal.toLowerCase()
   );
 
-  if (inputLowerCase != null) {
-    console.log(inputLowerCase.id);
-    return inputLowerCase.id;
-  }
-
-  if (inputUpperCase != null) {
-    console.log(inputUpperCase.id);
-    return inputUpperCase.id;
+  if (inputBothCases != null) {
+    return inputBothCases.id;
   }
 }
 
@@ -280,10 +272,10 @@ function findExistingEntry() {
 function render() {
   toDoList.innerHTML = "";
   const filteredTodos = filterTodos(appState.filter);
-  //console.log(filteredTodos);
 
   for (const todo of filteredTodos) {
-    createMarkupStructure(todo);
+    createTodoItemMarkupStructure(todo);
+    // renderTodo(todo);
   }
 
   renderFilter();
@@ -294,9 +286,9 @@ function render() {
  * @returns either array of all, done or open todos depending on state's filter property
  */
 function filterTodos(filterProp) {
-  if (filterProp === "open") {
+  if (filterProp === filterOpen) {
     return appState.todos.filter((e) => e.isDone === false);
-  } else if (filterProp === "done") {
+  } else if (filterProp === filterDone) {
     return appState.todos.filter((e) => e.isDone === true);
   } else {
     return appState.todos;
@@ -310,44 +302,46 @@ function filterTodos(filterProp) {
 function renderFilter() {
   switch (appState.filter) {
     case "all":
-      filterAll.checked = true;
+      domFilterAll.checked = true;
       break;
     case "open":
-      filterOpen.checked = true;
+      domFilterOpen.checked = true;
       break;
     case "done":
-      filterDone.checked = true;
+      domFilterDone.checked = true;
       break;
   }
 }
 
 //TODO: tidy code by implementing additional functions
-function createMarkupStructure(entry) {
+function createTodoItemMarkupStructure(todo) {
   const listItem = document.createElement("li");
+  //listItem.todoObj = entry;
 
   const todoEntry = document.createElement("input");
   todoEntry.setAttribute("type", "checkbox");
-  todoEntry.setAttribute("id", entry.id);
-  todoEntry.checked = entry.isDone;
+  todoEntry.setAttribute("id", todo.id);
+  todoEntry.checked = todo.isDone;
 
   todoEntry.addEventListener("change", toggleProgress);
 
   const entryLabel = document.createElement("label");
   entryLabel.setAttribute("for", todoEntry.id);
-  entryLabel.innerText = entry.description;
+  entryLabel.innerText = todo.description;
 
   listItem.appendChild(todoEntry);
   listItem.appendChild(entryLabel);
   toDoList.appendChild(listItem);
 
-  createUtilityButtons(listItem, todoEntry.id);
+  createUtilityButtonsForTodoItem(listItem, todoEntry.id);
 }
 
-function createUtilityButtons(listItem, id) {
+function createUtilityButtonsForTodoItem(listItem, id) {
   const btnContainer = document.createElement("div");
   //edit
   const editBtn = document.createElement("button");
   editBtn.setAttribute("name", id);
+  // editBtn.setAttribute("data-id", id);
   editBtn.innerText = "✏️";
   editBtn.addEventListener("click", editEntry);
   btnContainer.appendChild(editBtn);
@@ -356,13 +350,13 @@ function createUtilityButtons(listItem, id) {
   const moveUpBtn = document.createElement("button");
   moveUpBtn.setAttribute("name", id);
   moveUpBtn.innerText = "⬆";
-  moveUpBtn.addEventListener("click", moveEntry); //NYI
+  moveUpBtn.addEventListener("click", moveEntry);
   btnContainer.appendChild(moveUpBtn);
 
   const moveDownBtn = document.createElement("button");
   moveDownBtn.setAttribute("name", id);
   moveDownBtn.innerText = "⬇";
-  moveDownBtn.addEventListener("click", moveEntry); //NYI
+  moveDownBtn.addEventListener("click", moveEntry);
   btnContainer.appendChild(moveDownBtn);
 
   //delete
@@ -392,10 +386,12 @@ function renderErrorMsg(message) {
 /**
  * get data from local storage (todo-items as array)
  */
-function getLocalData() {
-  if (localStorage.getItem("todos")) {
-    const todoData = JSON.parse(localStorage.getItem("todos"));
-    appState.todos = todoData;
+function getDataFromLocalStorage() {
+  const todosFromLocalStorage = localStorage.getItem("todos");
+  if (todosFromLocalStorage !== null) {
+    //const todoData = JSON.parse(todosFromLocalStorage);
+    appState.todos = JSON.parse(todosFromLocalStorage);
+    // appState.todos = todoData;
   }
   if (localStorage.getItem("filter")) {
     appState.filter = localStorage.getItem("filter");
